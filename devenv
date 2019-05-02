@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+shopt -s expand_aliases
+
+### wrapper to run official Docker containers for programming languages
+
+if (( ${BASH_VERSINFO[0]} < 4 )) ; then
+    echo "${0##*/}: bash version < 4 is not supported" >&2
+    echo 'Try installing a modern bash version with either of:' >&2
+    echo '  brew install bash' >&2
+    echo '  port install bash' >&2
+    exit 1
+fi
+
+# a hack for `readlink -f` on BSD systems
+if [[ $(uname) == Darwin ]] && ! readlink -f / &> /dev/null ; then
+    if which greadlink &> /dev/null ; then
+        alias readlink=greadlink
+    else
+        echo "${0##*/}: \`readlink -f\` doesn't work" >&2
+        echo 'Try installing GNU readlink (greadlink) with either of:' >&2
+        echo '  brew install coreutils' >&2
+        echo '  port install coreutils' >&2
+        exit 1
+    fi
+fi
+
+# constants
+readonly SELF="$(readlink -f $0)"
+readonly BASE_DIR="${SELF%/*}"
+readonly PROG_NAME="${0##*/}"
+
+#colors
+readonly NC="$(tput sgr0)" # No Color
+readonly LightRed="$(tput bold ; tput setaf 1)"
+readonly Yellow="$(tput bold ; tput setaf 3)"
+readonly Green="$(tput setaf 2)"
+
+# variables
+verbose=false
+cmd=
+
+_help()
+{
+    [[ $1 == stdout ]] && usage || usage >&2
+    exit 1
+}
+
+usage()
+{
+    cat <<USAGE_END
+Usage: $PROG_NAME [options] <command> [command-options]
+
+  Helper tool to operate various programming languages environments that are
+  based on official Docker images.
+
+  Commands:
+
+    list     Show all supported environments. Option '-a|--all' enables detailed
+             listing.
+
+    ps       Show existing containers.
+
+    run      Run a command inside an environment, with CWD mounted from the
+             host, removing container after exit.
+
+    <environment-name>
+
+             Create specific environment and attach to it.
+
+    clean [environment]
+
+             Remove all or particular environments (containers).
+
+    help     Show this help screen.
+
+  Options:
+
+    -v|--verbose        Print what's going on.
+
+    -h|--help           Print this help screen.
+USAGE_END
+}
+
+die()
+{
+    local error='[ERROR]'
+
+    if [[ -t 2 ]] ; then
+        error="$LightRed$error$NC"
+    fi
+
+    echo -e "$PROG_NAME $error $@" >&2
+    exit 1
+}
+
+# parse CLI options
+while true ; do
+    case $1 in
+        -v|--verbose)    verbose=true ;;
+        -h|--help|help)  _help stdout ;;
+
+        list) cmd=$1 ; shift ; break ;;
+
+        -*) die "Unknown option '$1', see \`$PROG_NAME --help\`." ;;
+        *)  cmd=${1:-help} ; shift || true ; break ;;
+    esac
+
+    shift
+done
+
+cd $BASE_DIR
+
+# process commands
+case $cmd in
+    help)  _help stdout ;;
+    run)   docker-compose run --rm -v $OLDPWD:/data -w /data "$@" ;;
+    ps)    docker-compose ps ;;
+
+    list)  [[ $1 == -a || $1 == --all ]] && filter=cat
+           docker-compose ps --services | ${filter:-grep -v -}
+           ;;
+
+    bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
+    julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+
+           docker-compose up --no-start $cmd
+           docker start -ai $cmd
+           ;;
+
+    clean) if [[ -n $1 ]] ; then
+             docker-compose rm -f "$1"
+           else
+             # clean all
+             docker-compose down
+           fi
+           ;;
+
+    *) die "Unknown command: '$cmd'" ;;
+esac

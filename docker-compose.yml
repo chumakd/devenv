@@ -1,0 +1,271 @@
+version: '3.7'
+
+x-aliases:
+  - &common-options
+    #network_mode: host
+    stdin_open: true
+    tty: true
+
+services:
+
+  # Bash ------------------------------- {{{1
+  bash:
+    image: bash
+    container_name: bash
+    <<: *common-options
+
+  bash-repl:
+    image: bash
+    container_name: bash-repl
+    <<: *common-options
+
+  bash-shell:
+    image: bash
+    container_name: bash-shell
+    <<: *common-options
+
+  # Clojure ---------------------------- {{{1
+  clojure:
+    image: clojure
+    container_name: clojure
+    command: bash
+    <<: *common-options
+
+  clojure-repl:
+    image: clojure
+    container_name: clojure-repl
+    <<: *common-options
+
+  clojure-shell:
+    image: clojure
+    container_name: clojure-shell
+    command: bash
+    <<: *common-options
+
+  # Elixir ----------------------------- {{{1
+  elixir:
+    image: elixir
+    container_name: elixir
+    command: bash
+    <<: *common-options
+
+  elixir-repl:
+    image: elixir
+    container_name: elixir-repl
+    <<: *common-options
+
+  elixir-shell:
+    image: elixir
+    container_name: elixir-shell
+    command: bash
+    <<: *common-options
+
+  # Erlang ----------------------------- {{{1
+  erlang:
+    image: erlang
+    container_name: erlang
+    command: bash
+    <<: *common-options
+
+  erlang-repl:
+    image: erlang
+    container_name: erlang-repl
+    <<: *common-options
+
+  erlang-shell:
+    image: erlang
+    container_name: erlang-shell
+    command: bash
+    <<: *common-options
+
+  # GCC -------------------------------- {{{1
+  gcc:
+    image: gcc
+    container_name: gcc
+    command: bash
+    <<: *common-options
+
+  gcc-shell:
+    image: gcc
+    container_name: gcc-shell
+    command: bash
+    <<: *common-options
+
+  # Golang ----------------------------- {{{1
+  golang:
+    image: golang
+    container_name: golang
+    command: bash
+    <<: *common-options
+
+  golang-shell:
+    image: golang
+    container_name: golang-shell
+    command: bash
+    <<: *common-options
+
+  # Haskell ---------------------------- {{{1
+  haskell:
+    image: haskell
+    container_name: haskell
+    entrypoint: ghc
+    <<: *common-options
+
+  haskell-repl:
+    image: haskell
+    container_name: haskell-repl
+    <<: *common-options
+
+  haskell-shell:
+    image: haskell
+    container_name: haskell-shell
+    command: bash
+    <<: *common-options
+
+  # Julia ------------------------------ {{{1
+  julia:
+    image: julia
+    container_name: julia
+    entrypoint: julia
+    <<: *common-options
+
+  julia-repl:
+    image: julia
+    container_name: julia-repl
+    <<: *common-options
+
+  julia-shell:
+    image: julia
+    container_name: julia-shell
+    command: bash
+    <<: *common-options
+
+  # Node ------------------------------- {{{1
+  node:
+    image: node
+    container_name: node
+    command: bash
+    <<: *common-options
+
+  node-repl:
+    image: node
+    container_name: node-repl
+    <<: *common-options
+
+  node-shell:
+    image: node
+    container_name: node-shell
+    command: bash
+    <<: *common-options
+
+  # OpenJDK ---------------------------- {{{1
+  openjdk:
+    image: openjdk
+    container_name: openjdk
+    command: bash
+    <<: *common-options
+
+  openjdk-repl:
+    image: openjdk
+    container_name: openjdk-repl
+    <<: *common-options
+
+  openjdk-shell:
+    image: openjdk
+    container_name: openjdk-shell
+    command: bash
+    <<: *common-options
+
+  # Perl ------------------------------- {{{1
+  perl:
+    image: perl
+    container_name: perl
+    entrypoint: perl
+    <<: *common-options
+
+  perl-dbg:
+    image: perl
+    container_name: perl-dbg
+    <<: *common-options
+
+  # TODO: use REPL module
+  perl-repl:
+    image: perl
+    container_name: perl-repl
+    <<: *common-options
+
+  perl-shell:
+    image: perl
+    container_name: perl-shell
+    command: bash
+    <<: *common-options
+
+  # Perl6 ------------------------------ {{{1
+  perl6:
+    image: rakudo-star
+    container_name: perl6
+    entrypoint: perl6
+    <<: *common-options
+
+  # TODO: check if there're REPL module
+  perl6-repl:
+    image: rakudo-star
+    container_name: perl6-repl
+    <<: *common-options
+
+  perl6-shell:
+    image: rakudo-star
+    container_name: perl6-shell
+    command: bash
+    <<: *common-options
+
+  # Python ----------------------------- {{{1
+  python:
+    image: python
+    container_name: python
+    entrypoint: python
+    <<: *common-options
+
+  python-repl:
+    image: python
+    container_name: python-repl
+    <<: *common-options
+
+  python-shell:
+    image: python
+    container_name: python-shell
+    command: bash
+    <<: *common-options
+
+  # Ruby ------------------------------- {{{1
+  ruby:
+    image: ruby
+    container_name: ruby
+    entrypoint: ruby
+    <<: *common-options
+
+  ruby-repl:
+    image: ruby
+    container_name: ruby-repl
+    <<: *common-options
+
+  ruby-shell:
+    image: ruby
+    container_name: ruby-shell
+    command: bash
+    <<: *common-options
+
+  # Rust ------------------------------- {{{1
+  rust:
+    image: rust
+    container_name: rust
+    command: bash
+    <<: *common-options
+
+  rust-shell:
+    image: rust
+    container_name: rust-shell
+    command: bash
+    <<: *common-options
+
+# vim: tabstop=2 shiftwidth=2 expandtab foldmethod=marker
