@@ -188,9 +188,10 @@ services:
     container_name: perl-dbg
     <<: *common-options
 
-  # TODO: use REPL module
   perl-repl:
-    image: perl
+    image: local/perl-repl
+    build:
+      context: perl-repl
     container_name: perl-repl
     <<: *common-options
 
