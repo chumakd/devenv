@@ -122,7 +122,7 @@ cd $BASE_DIR
 # process commands
 case $cmd in
     help)  _help stdout ;;
-    run)   docker-compose run --rm -v $OLDPWD:/data -w /data "$@" ;;
+    run)   docker-compose run --rm -v $OLDPWD:/data -w /data -e USER=root "$@" ;;
     ps)    docker-compose ps ;;
 
     list)  [[ $1 == -a || $1 == --all ]] && filter=cat
