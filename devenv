@@ -61,7 +61,9 @@ Usage: $PROG_NAME [options] <command> [command-options]
 
     ps       Show existing containers.
 
-    run      Run a command inside an environment, with CWD mounted from the
+    run <environment-name> [command [options]]
+
+             Run a command inside an environment, with CWD mounted from the
              host, removing container after exit.
 
              Example: $PROG_NAME run ruby ./my-script.rb --script-opt script-arg
