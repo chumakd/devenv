@@ -64,9 +64,15 @@ Usage: $PROG_NAME [options] <command> [command-options]
     run      Run a command inside an environment, with CWD mounted from the
              host, removing container after exit.
 
+             Example: $PROG_NAME run ruby ./my-script.rb --script-opt script-arg
+                      $PROG_NAME run rust cargo new my-project
+
     <environment-name>
 
              Create specific environment and attach to it.
+
+             Example: $PROG_NAME python-shell
+                      $PROG_NAME haskell-repl
 
     clean [environment]
 

@@ -19,11 +19,6 @@ services:
     container_name: bash-repl
     <<: *common-options
 
-  bash-shell:
-    image: bash
-    container_name: bash-shell
-    <<: *common-options
-
   # Clojure ---------------------------- {{{1
   clojure:
     image: clojure
@@ -34,12 +29,6 @@ services:
   clojure-repl:
     image: clojure
     container_name: clojure-repl
-    <<: *common-options
-
-  clojure-shell:
-    image: clojure
-    container_name: clojure-shell
-    command: bash
     <<: *common-options
 
   # Elixir ----------------------------- {{{1
@@ -54,12 +43,6 @@ services:
     container_name: elixir-repl
     <<: *common-options
 
-  elixir-shell:
-    image: elixir
-    container_name: elixir-shell
-    command: bash
-    <<: *common-options
-
   # Erlang ----------------------------- {{{1
   erlang:
     image: erlang
@@ -72,22 +55,10 @@ services:
     container_name: erlang-repl
     <<: *common-options
 
-  erlang-shell:
-    image: erlang
-    container_name: erlang-shell
-    command: bash
-    <<: *common-options
-
   # GCC -------------------------------- {{{1
   gcc:
     image: gcc
     container_name: gcc
-    command: bash
-    <<: *common-options
-
-  gcc-shell:
-    image: gcc
-    container_name: gcc-shell
     command: bash
     <<: *common-options
 
@@ -98,17 +69,11 @@ services:
     command: bash
     <<: *common-options
 
-  golang-shell:
-    image: golang
-    container_name: golang-shell
-    command: bash
-    <<: *common-options
-
   # Haskell ---------------------------- {{{1
   haskell:
     image: haskell
     container_name: haskell
-    entrypoint: ghc
+    command: bash
     <<: *common-options
 
   haskell-repl:
@@ -116,28 +81,16 @@ services:
     container_name: haskell-repl
     <<: *common-options
 
-  haskell-shell:
-    image: haskell
-    container_name: haskell-shell
-    command: bash
-    <<: *common-options
-
   # Julia ------------------------------ {{{1
   julia:
     image: julia
     container_name: julia
-    entrypoint: julia
+    command: bash
     <<: *common-options
 
   julia-repl:
     image: julia
     container_name: julia-repl
-    <<: *common-options
-
-  julia-shell:
-    image: julia
-    container_name: julia-shell
-    command: bash
     <<: *common-options
 
   # Node ------------------------------- {{{1
@@ -152,12 +105,6 @@ services:
     container_name: node-repl
     <<: *common-options
 
-  node-shell:
-    image: node
-    container_name: node-shell
-    command: bash
-    <<: *common-options
-
   # OpenJDK ---------------------------- {{{1
   openjdk:
     image: openjdk
@@ -168,12 +115,6 @@ services:
   openjdk-repl:
     image: openjdk
     container_name: openjdk-repl
-    <<: *common-options
-
-  openjdk-shell:
-    image: openjdk
-    container_name: openjdk-shell
-    command: bash
     <<: *common-options
 
   # Perl ------------------------------- {{{1
@@ -208,7 +149,7 @@ services:
     entrypoint: perl6
     <<: *common-options
 
-  # TODO: check if there're REPL module
+  # TODO: check if there're REPL module in Perl6
   perl6-repl:
     image: rakudo-star
     container_name: perl6-repl
@@ -260,12 +201,6 @@ services:
   rust:
     image: rust
     container_name: rust
-    command: bash
-    <<: *common-options
-
-  rust-shell:
-    image: rust
-    container_name: rust-shell
     command: bash
     <<: *common-options
 
