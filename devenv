@@ -76,6 +76,15 @@ Usage: $PROG_NAME [options] <command> [command-options]
              Example: $PROG_NAME python-shell
                       $PROG_NAME haskell-repl
 
+    init <environment> [name] [options]
+
+             Initialize environment with CWD mounted under '/data/' inside
+             container. A custom 'name' can be set for the resulting container,
+             which allows creating multiple containers of the same environment
+             type (e.g. a container per project). Default name matches
+             environment. If 'options' provided, they're passed to the
+             \`docker create\` command.
+
     clean [environment]
 
              Remove all or particular environments (containers).
@@ -129,11 +138,25 @@ case $cmd in
            docker-compose ps --services | ${filter:-grep -v -}
            ;;
 
+    init)  [[ -n $1 ]] || die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
+           case $1 in
+              bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
+              julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+                  docker create --env USER=root --name ${2:-$1} --tty \
+                                --interactive --volume $OLDPWD:/data \
+                                --workdir /data ${@:3} $1
+                  ;;
+              *)  die "Unknown environment '$1', see \`$PROG_NAME list\`." ;;
+           esac
+           ;;
+
     bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
     julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
-
-           docker-compose up --no-start $cmd
-           docker start -ai $cmd
+           container=$cmd
+           # check whether container already exists (as a result of `init` command)
+           docker container inspect -f '{{.Id}}' $container &>/dev/null ||
+              docker-compose up --no-start $container
+           docker start -ai $container
            ;;
 
     clean) if [[ -n $1 ]] ; then
