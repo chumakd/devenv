@@ -12,11 +12,13 @@ services:
   bash:
     image: bash
     container_name: bash
+    labels: [ 'devenv.type=bash' ]
     <<: *common-options
 
   bash-repl:
     image: bash
     container_name: bash-repl
+    labels: [ 'devenv.type=bash-repl' ]
     <<: *common-options
 
   # Clojure ---------------------------- {{{1
@@ -24,11 +26,13 @@ services:
     image: clojure
     container_name: clojure
     command: bash
+    labels: [ 'devenv.type=clojure' ]
     <<: *common-options
 
   clojure-repl:
     image: clojure
     container_name: clojure-repl
+    labels: [ 'devenv.type=clojure-repl' ]
     <<: *common-options
 
   # Elixir ----------------------------- {{{1
@@ -36,11 +40,13 @@ services:
     image: elixir
     container_name: elixir
     command: bash
+    labels: [ 'devenv.type=elixir' ]
     <<: *common-options
 
   elixir-repl:
     image: elixir
     container_name: elixir-repl
+    labels: [ 'devenv.type=elixir-repl' ]
     <<: *common-options
 
   # Erlang ----------------------------- {{{1
@@ -48,11 +54,13 @@ services:
     image: erlang
     container_name: erlang
     command: bash
+    labels: [ 'devenv.type=erlang' ]
     <<: *common-options
 
   erlang-repl:
     image: erlang
     container_name: erlang-repl
+    labels: [ 'devenv.type=erlang-repl' ]
     <<: *common-options
 
   # GCC -------------------------------- {{{1
@@ -60,6 +68,7 @@ services:
     image: gcc
     container_name: gcc
     command: bash
+    labels: [ 'devenv.type=gcc' ]
     <<: *common-options
 
   # Golang ----------------------------- {{{1
@@ -67,6 +76,7 @@ services:
     image: golang
     container_name: golang
     command: bash
+    labels: [ 'devenv.type=golang' ]
     <<: *common-options
 
   # Haskell ---------------------------- {{{1
@@ -74,11 +84,13 @@ services:
     image: haskell
     container_name: haskell
     command: bash
+    labels: [ 'devenv.type=haskell' ]
     <<: *common-options
 
   haskell-repl:
     image: haskell
     container_name: haskell-repl
+    labels: [ 'devenv.type=haskell-repl' ]
     <<: *common-options
 
   # Julia ------------------------------ {{{1
@@ -86,11 +98,13 @@ services:
     image: julia
     container_name: julia
     command: bash
+    labels: [ 'devenv.type=julia' ]
     <<: *common-options
 
   julia-repl:
     image: julia
     container_name: julia-repl
+    labels: [ 'devenv.type=julia-repl' ]
     <<: *common-options
 
   # Node ------------------------------- {{{1
@@ -98,11 +112,13 @@ services:
     image: node
     container_name: node
     command: bash
+    labels: [ 'devenv.type=node' ]
     <<: *common-options
 
   node-repl:
     image: node
     container_name: node-repl
+    labels: [ 'devenv.type=node-repl' ]
     <<: *common-options
 
   # OpenJDK ---------------------------- {{{1
@@ -110,11 +126,13 @@ services:
     image: openjdk
     container_name: openjdk
     command: bash
+    labels: [ 'devenv.type=openjdk' ]
     <<: *common-options
 
   openjdk-repl:
     image: openjdk
     container_name: openjdk-repl
+    labels: [ 'devenv.type=openjdk-repl' ]
     <<: *common-options
 
   # Perl ------------------------------- {{{1
@@ -122,11 +140,13 @@ services:
     image: perl
     container_name: perl
     entrypoint: perl
+    labels: [ 'devenv.type=perl' ]
     <<: *common-options
 
   perl-dbg:
     image: perl
     container_name: perl-dbg
+    labels: [ 'devenv.type=perl-dbg' ]
     <<: *common-options
 
   perl-repl:
@@ -134,12 +154,14 @@ services:
     build:
       context: perl-repl
     container_name: perl-repl
+    labels: [ 'devenv.type=perl-repl' ]
     <<: *common-options
 
   perl-shell:
     image: perl
     container_name: perl-shell
     command: bash
+    labels: [ 'devenv.type=perl-shell' ]
     <<: *common-options
 
   # Perl6 ------------------------------ {{{1
@@ -147,18 +169,21 @@ services:
     image: rakudo-star
     container_name: perl6
     entrypoint: perl6
+    labels: [ 'devenv.type=perl6' ]
     <<: *common-options
 
   # TODO: check if there're REPL module in Perl6
   perl6-repl:
     image: rakudo-star
     container_name: perl6-repl
+    labels: [ 'devenv.type=perl6-repl' ]
     <<: *common-options
 
   perl6-shell:
     image: rakudo-star
     container_name: perl6-shell
     command: bash
+    labels: [ 'devenv.type=perl6-shell' ]
     <<: *common-options
 
   # Python ----------------------------- {{{1
@@ -166,16 +191,19 @@ services:
     image: python
     container_name: python
     entrypoint: python
+    labels: [ 'devenv.type=python' ]
     <<: *common-options
 
   python-repl:
     image: python
     container_name: python-repl
+    labels: [ 'devenv.type=python-repl' ]
     <<: *common-options
 
   python-shell:
     image: python
     container_name: python-shell
+    labels: [ 'devenv.type=python-shell' ]
     command: bash
     <<: *common-options
 
@@ -184,17 +212,20 @@ services:
     image: ruby
     container_name: ruby
     entrypoint: ruby
+    labels: [ 'devenv.type=ruby' ]
     <<: *common-options
 
   ruby-repl:
     image: ruby
     container_name: ruby-repl
+    labels: [ 'devenv.type=ruby-repl' ]
     <<: *common-options
 
   ruby-shell:
     image: ruby
     container_name: ruby-shell
     command: bash
+    labels: [ 'devenv.type=ruby-shell' ]
     <<: *common-options
 
   # Rust ------------------------------- {{{1
@@ -202,6 +233,7 @@ services:
     image: rust
     container_name: rust
     command: bash
+    labels: [ 'devenv.type=rust' ]
     <<: *common-options
 
 # vim: tabstop=2 shiftwidth=2 expandtab foldmethod=marker

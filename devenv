@@ -38,7 +38,7 @@ readonly Green="$(tput setaf 2)"
 
 # variables
 verbose=false
-cmd=
+cmd=start
 
 _help()
 {
@@ -49,7 +49,8 @@ _help()
 usage()
 {
     cat <<USAGE_END
-Usage: $PROG_NAME [options] <command> [command-options]
+Usage: $PROG_NAME
+       $PROG_NAME [options] [command [command-options]]
 
   Helper tool to operate various programming languages environments that are
   based on official Docker images.
@@ -61,20 +62,13 @@ Usage: $PROG_NAME [options] <command> [command-options]
 
     ps       Show existing containers.
 
-    run <environment-name> [command [options]]
+    run <environment> [command [options]]
 
              Run a command inside an environment, with CWD mounted from the
              host, removing container after exit.
 
              Example: $PROG_NAME run ruby ./my-script.rb --script-opt script-arg
                       $PROG_NAME run rust cargo new my-project
-
-    <environment-name>
-
-             Create specific environment and attach to it.
-
-             Example: $PROG_NAME python-shell
-                      $PROG_NAME haskell-repl
 
     init <environment> [name] [options]
 
@@ -84,6 +78,20 @@ Usage: $PROG_NAME [options] <command> [command-options]
              type (e.g. a container per project). Default name matches
              environment. If 'options' provided, they're passed to the
              \`docker create\` command.
+
+    start [name]
+
+             Start a container. It must be created first, using \`init\`
+             command. If name is not specified, container will be searched in
+             the list of existing environments attached to the current working
+             directory. This is the default command.
+
+    <environment>
+
+             Create specific environment and attach to it.
+
+             Example: $PROG_NAME python-shell
+                      $PROG_NAME haskell-repl
 
     clean [environment]
 
@@ -112,15 +120,13 @@ die()
 }
 
 # parse CLI options
-while true ; do
+while [[ -n $1 ]] ; do
     case $1 in
         -v|--verbose)    verbose=true ;;
         -h|--help|help)  _help stdout ;;
 
-        list) cmd=$1 ; shift ; break ;;
-
         -*) die "Unknown option '$1', see \`$PROG_NAME --help\`." ;;
-        *)  cmd=${1:-help} ; shift || true ; break ;;
+        *)  cmd=$1 ; shift ; break ;;
     esac
 
     shift
@@ -131,39 +137,87 @@ cd $BASE_DIR
 # process commands
 case $cmd in
     help)  _help stdout ;;
-    run)   docker-compose run --rm -v $OLDPWD:/data -w /data -e USER=root "$@" ;;
-    ps)    docker-compose ps ;;
 
     list)  [[ $1 == -a || $1 == --all ]] && filter=cat
            docker-compose ps --services | ${filter:-grep -v -}
            ;;
 
-    init)  [[ -n $1 ]] || die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
+    ps)    if (( $(docker ps --quiet --all --filter 'label=devenv.type' | wc -l) > 0 )) ; then
+               docker ps --all --filter 'label=devenv.type' \
+                         --format 'table {{.Names}}\t{{.Status}}\t{{.Label "devenv.datadir"}}'
+           fi
+           ;;
+
+    run)   docker-compose run --rm --volume $OLDPWD:/data \
+                              --workdir /data --env USER=root "$@" ;;
+
+    init)  [[ -n $1 ]] ||
+               die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
            case $1 in
               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
               julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
                   docker create --env USER=root --name ${2:-$1} --tty \
                                 --interactive --volume $OLDPWD:/data \
-                                --workdir /data ${@:3} $1
+                                --workdir /data \
+                                --label="devenv.type=$1" \
+                                --label="devenv.datadir=$OLDPWD" \
+                                "${@:3}" $1
                   ;;
-              *)  die "Unknown environment '$1', see \`$PROG_NAME list\`." ;;
+              *)  die "Unknown environment '$1', see \`$PROG_NAME list --all\`." ;;
            esac
+           ;;
+
+    start) if [[ -n $1 ]] ; then
+               container=$1
+           else
+               available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$OLDPWD") )
+
+               (( ${#available[@]} > 0 )) ||
+                   die "No environment yet exists for current project '$OLDPWD'." \
+                       "You need to create one first. Please, see \`$PROG_NAME --help\`."
+
+               if (( ${#available[@]} > 1 )) ; then
+                   options=()
+                   for (( i=0 ; i < ${#available[@]} ; ++i )) ; do
+                       options[$i]=$(basename $(docker inspect --format '{{.Name}}' ${available[$i]}))
+                       options[$i]+=$(echo -e '\t')$(docker inspect --format '(cmd: {{join .Config.Cmd " "}}' ${available[$i]})
+                       options[$i]+=' '$(docker inspect --format '{{join .Args " "}})' ${available[$i]})
+                   done
+
+                   select o in "${options[@]}" ; do
+                       if [[ -n $o ]] ; then
+                           container=${available[$((REPLY - 1))]}
+                           break
+                       fi
+                   done
+                   [[ -n $container ]] || die 'No container selected to run'
+               else
+                   container=${available[0]}
+               fi
+           fi
+
+           echo Starting $(basename $(docker inspect --format '{{.Name}}' $container))
+           docker start --attach --interactive $container
            ;;
 
     bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
     julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
            container=$cmd
            # check whether container already exists (as a result of `init` command)
-           docker container inspect -f '{{.Id}}' $container &>/dev/null ||
+           docker container inspect --format '{{.Id}}' $container &>/dev/null ||
               docker-compose up --no-start $container
-           docker start -ai $container
+           docker start --attach --interactive $container
            ;;
 
     clean) if [[ -n $1 ]] ; then
-             docker-compose rm -f "$1"
+             docker-compose rm --force "$1"
            else
              # clean all
              docker-compose down
+             for container in $(docker ps --quiet --all --filter 'label=devenv.type'); do
+                 echo Removing $(basename $(docker inspect --format '{{.Name}}' $container))
+                 docker rm --force $container >/dev/null
+             done
            fi
            ;;
 
