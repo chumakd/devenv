@@ -125,7 +125,7 @@ die()
 
 cmd_list()
 {
-    local filter='-grep -v -'
+    local filter='grep -v -'
     [[ $1 == -a || $1 == --all ]] && filter=cat
     docker-compose ps --services | ${filter}
 }
