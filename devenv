@@ -203,8 +203,11 @@ cmd_clean()
         fi
 
         for container in "${containers[@]}"; do
-            echo Removing $(basename $(docker inspect --format '{{.Name}}' $container))
-            docker rm --force $container >/dev/null
+            local container_name=$(docker inspect --format '{{.Name}}' $container)
+            if [[ -n $container_name ]] ; then
+                echo Removing $(basename $container_name)
+                docker rm --force $container >/dev/null
+            fi
         done
     fi
 }
