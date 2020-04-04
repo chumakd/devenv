@@ -16,4 +16,11 @@ RUN tar -xf clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-18.04.tar.xz
 
 FROM ubuntu:18.04
 ARG  CLANG_RELEASE=10.0.0
+
 COPY --from=fetcher /clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-18.04/ /usr/local/
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    DEBCONF_NONINTERACTIVE_SEEN=true
+
+RUN apt-get update \
+    && apt-get -y install build-essential cmake
