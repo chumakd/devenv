@@ -153,14 +153,14 @@ cmd_start()
     if [[ -z $container ]] ; then
         local available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$OLDPWD") )
 
-        (( ${#available} > 0 )) ||
+        (( ${#available[@]} > 0 )) ||
             die "No environment yet exists for current project '$OLDPWD'." \
                 "You need to create one first. Please, see \`$PROG_NAME --help\`."
 
-        if (( ${#available} > 1 )) ; then
+        if (( ${#available[@]} > 1 )) ; then
             local options=()
             local i=
-            for (( i=0 ; i < ${#available} ; ++i )) ; do
+            for (( i=0 ; i < ${#available[@]} ; ++i )) ; do
                 options[$i]=$(basename $(docker inspect --format '{{.Name}}' ${available[$i]}))
                 options[$i]+=$(echo -e '\t')$(docker inspect --format '(cmd: {{join .Config.Cmd " "}}' ${available[$i]})
                 options[$i]+=$(docker inspect --format ' {{join .Args " "}})' ${available[$i]})
@@ -250,8 +250,9 @@ case $cmd in
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
 
             case $1 in
-               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
-               julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*) ;& # fall through
+               julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
+               local/clang*)
                    docker create --env USER=root --name ${2:-$1} --tty \
                                  --interactive --volume $OLDPWD:/data \
                                  --workdir /data \
