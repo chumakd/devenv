@@ -244,7 +244,7 @@ case $cmd in
             ;;
 
     run)    docker-compose run --rm --volume $OLDPWD:/data --workdir /data \
-                               --env USER=root "$@" ;;
+                               -e USER=root "$@" ;;
 
     init)   [[ -n $1 ]] ||
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
