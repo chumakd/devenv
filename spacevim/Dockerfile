@@ -15,6 +15,7 @@ RUN apt-get update \
         npm \
         openjdk-11-jdk-headless \
         pkg-config \
+        python2 \
         python3-pip \
         ruby \
         ruby-dev \
@@ -22,11 +23,16 @@ RUN apt-get update \
         yarnpkg \
     && apt-get clean all
 
+# python2-pip
+RUN curl https://bootstrap.pypa.io/get-pip.py | python2
+
 # neovim
 RUN brew install nvim \
     && brew cleanup -s \
-    && pip3 install neovim pipenv \
-    && gem install neovim
+    && pip3 install --system neovim pipenv \
+    && pip2 install neovim \
+    && gem install --no-user-install neovim \
+    && npm install --global neovim
 
 # spacevim
 RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
