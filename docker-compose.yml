@@ -250,4 +250,14 @@ services:
     labels: [ 'devenv.type=rust' ]
     <<: *common-options
 
+  # Spacevim --------------------------- {{{1
+  spacevim:
+    image: local/spacevim
+    build:
+      context: spacevim
+    container_name: spacevim
+    entrypoint: nvim
+    labels: [ 'devenv.type=spacevim' ]
+    <<: *common-options
+
 # vim: tabstop=2 shiftwidth=2 expandtab foldmethod=marker

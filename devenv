@@ -239,7 +239,8 @@ case $cmd in
     clean)  cmd_clean "$1" ;;
 
     bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
-    julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+    julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
+    spacevim)
             container=$cmd
             create "$container"
             cmd_start "$container"
