@@ -185,6 +185,8 @@ cmd_start()
     docker start --attach --interactive $container
 }
 
+# TODO: clean current by default, if not found ask for a name or --all option
+# TODO: add -v option
 cmd_clean()
 {
     if [[ -n $1 ]] ; then
@@ -203,7 +205,7 @@ cmd_clean()
         fi
 
         for container in "${containers[@]}"; do
-            local container_name=$(docker inspect --format '{{.Name}}' $container)
+            local container_name=$(docker inspect --format '{{.Name}}' $container 2>/dev/null)
             if [[ -n $container_name ]] ; then
                 echo Removing $(basename $container_name)
                 docker rm --force $container >/dev/null
