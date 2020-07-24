@@ -143,7 +143,7 @@ create()
     local container=$1
 
     docker inspect --format '{{.Id}}' $container &>/dev/null ||
-        docker-compose up --no-start $container
+        docker-compose up --build --no-start $container
 }
 
 cmd_start()
