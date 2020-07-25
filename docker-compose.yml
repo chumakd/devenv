@@ -256,8 +256,8 @@ services:
     build:
       context: spacevim
       args:
-        HOST_UID: ${HOST_UID}
-        HOST_GID: ${HOST_GID}
+        HOST_UID: ${HOST_UID:-}
+        HOST_GID: ${HOST_GID:-}
     container_name: spacevim
     entrypoint: nvim
     labels: [ 'devenv.type=spacevim' ]

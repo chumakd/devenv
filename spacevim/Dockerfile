@@ -52,7 +52,7 @@ RUN brew install nvim \
 RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
     && mkdir -p $HOME/.config $HOME/.SpaceVim.d \
     && cp $HOME/.SpaceVim/docker/init.toml $HOME/.SpaceVim.d/init.toml \
-    && sed -i -r -e 's/(\[options\])/\1\n    disabled_plugins = ["deoplete-go","vnote","LanguageClient-neovim","vim-import-js","floobits-neovim","julia-vim"]/' \
+    && sed -i -r -e 's/(\[options\])/\1\n    disabled_plugins = ["deoplete-go","vnote","julia-vim"]/' \
                     $HOME/.SpaceVim.d/init.toml \
     && pip3 install sexpdata websocket-client \
     && $HOME/.SpaceVim/docs/install.sh \
@@ -60,3 +60,22 @@ RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
     && (cd $HOME/.SpaceVim/bundle/vimproc.vim/ && make) \
     && nvim --headless +'call dein#install()' +qall \
     && rm -f $HOME/.SpaceVim.d/init.toml
+
+# TODO: re-enable disabled_plugins when respecive issues have been fixed upstream:
+#
+# deoplete-go
+#  Hangs at:
+#    x86_64-linux-gnu-gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -I./python -I./lib -I/usr/include/python3.8 -c ./python/objToJSON.c -o /home/linuxbrew/.cache/vimfiles/repos/github.com/zchee/deoplete-go/build/temp.linux-x86_64-3.8/./python/objToJSON.o -D_GNU_SOURCE
+#
+#  See also:
+#    https://github.com/SpaceVim/SpaceVim/issues/3380
+#    https://github.com/deoplete-plugins/deoplete-go/issues/98
+#    https://github.com/Shougo/deoplete.nvim/issues/546
+#
+# vnote
+#   Error detected while processing function vnote#OnVimLeave[1]..vnote#GetNoteBook:
+#   line    2:
+#   E171: Missing :endif
+#
+# julia-vim
+#   Unknown function: LaTeXtoUnicode#Refresh
