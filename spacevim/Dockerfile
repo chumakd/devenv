@@ -30,13 +30,23 @@ RUN apt-get update \
 # python2-pip
 RUN curl https://bootstrap.pypa.io/get-pip.py | python2
 
-# neovim
-RUN brew install nvim \
-    && brew cleanup -s \
-    && pip3 install --system neovim pipenv \
+# neovim deps
+RUN pip3 install --system neovim pipenv \
     && pip2 install neovim \
     && gem install --no-user-install neovim \
     && npm install --global neovim
+
+# update container's user IDs to match docker host user
+ARG HOST_UID
+ARG HOST_GID
+RUN if [ -n "$HOST_UID" ] ; then usermod --uid $HOST_UID linuxbrew ; fi \
+    && if [ -n "$HOST_GID" ] ; then groupmod --gid $HOST_GID linuxbrew ; fi
+
+USER linuxbrew
+
+# neovim
+RUN brew install nvim \
+    && brew cleanup -s
 
 # spacevim
 RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \

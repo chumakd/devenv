@@ -143,7 +143,8 @@ create()
     local container=$1
 
     docker inspect --format '{{.Id}}' $container &>/dev/null ||
-        docker-compose up --build --no-start $container
+        HOST_UID=$(id -u) HOST_GID=$(id -g) \
+            docker-compose up --build --no-start $container
 }
 
 cmd_start()
@@ -246,6 +247,7 @@ case $cmd in
             cmd_start "$container"
             ;;
 
+            # TODO: enable USER override by the current user IDs
     run)    docker-compose run --rm --volume $OLDPWD:/data --workdir /data \
                                -e USER=root "$@" ;;
 
