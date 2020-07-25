@@ -258,6 +258,8 @@ services:
     container_name: spacevim
     entrypoint: nvim
     labels: [ 'devenv.type=spacevim' ]
+    volumes:
+      - ${HOME}/.SpaceVim.d:/root/.SpaceVim.d
     <<: *common-options
 
 # vim: tabstop=2 shiftwidth=2 expandtab foldmethod=marker

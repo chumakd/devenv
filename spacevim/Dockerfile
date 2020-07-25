@@ -10,7 +10,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get -y install \
         build-essential \
+        cmake \
+        cscope \
+        exuberant-ctags \
         fontconfig \
+        global \
         golang \
         npm \
         openjdk-11-jdk-headless \
@@ -36,11 +40,13 @@ RUN brew install nvim \
 
 # spacevim
 RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
-    && mkdir -p $HOME/.config $HOME/.SpaceVim.d $HOME/.vim/files/info \
+    && mkdir -p $HOME/.config $HOME/.SpaceVim.d \
     && cp $HOME/.SpaceVim/docker/init.toml $HOME/.SpaceVim.d/init.toml \
     && sed -i -r -e 's/(\[options\])/\1\n    disabled_plugins = ["deoplete-go","vnote","LanguageClient-neovim","vim-import-js","floobits-neovim","julia-vim"]/' \
                     $HOME/.SpaceVim.d/init.toml \
     && pip3 install sexpdata websocket-client \
     && $HOME/.SpaceVim/docs/install.sh \
+    && mkdir -p $HOME/.vim/files/info \
+    && (cd $HOME/.SpaceVim/bundle/vimproc.vim/ && make) \
     && nvim --headless +'call dein#install()' +qall \
     && rm -f $HOME/.SpaceVim.d/init.toml
