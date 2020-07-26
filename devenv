@@ -123,6 +123,7 @@ die()
 
 # commands
 
+# TODO: filter by name e.g. python or --all perl
 cmd_list()
 {
     local filter='grep -v -'
@@ -188,6 +189,8 @@ cmd_start()
 
 # TODO: clean current by default, if not found ask for a name or --all option
 # TODO: add -v option
+# TODO: ask confirmation for --all
+# TODO: add -y option
 cmd_clean()
 {
     if [[ -n $1 ]] ; then
@@ -248,23 +251,30 @@ case $cmd in
             ;;
 
             # TODO: enable USER override by the current user IDs
-    run)    docker-compose run --rm --volume $OLDPWD:/data --workdir /data \
-                               -e USER=root "$@" ;;
+    run)    docker-compose run --rm --volume $OLDPWD:/data --workdir /data "$@" ;;
 
     init)   [[ -n $1 ]] ||
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
 
-            case $1 in
-               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*) ;& # fall through
-               julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
-               local/clang*)
-                   docker create --env USER=root --name ${2:-$1} --tty \
+            case ${image:=$1} in
+               spacevim) docker_opts="--volume $HOME/.SpaceVim.d/:/home/linuxbrew/.SpaceVim.d" ;& # fall through
+               clang*)   image=local/$image
+                         HOST_UID=$(id -u) HOST_GID=$(id -g) \
+                             docker-compose build $1
+                         ;&
+
+               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*) ;&
+               julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+
+                   container=${2:-$1-${OLDPWD##*/}}
+                   docker create --name "${container// /-}" --tty \
                                  --interactive --volume $OLDPWD:/data \
                                  --workdir /data \
                                  --label="devenv.type=$1" \
                                  --label="devenv.datadir=$OLDPWD" \
-                                 "${@:3}" $1
+                                 $docker_opts "${@:3}" $image
                    ;;
+
                *)  die "Unknown environment '$1', see \`$PROG_NAME list --all\`." ;;
             esac
             ;;

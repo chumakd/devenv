@@ -259,10 +259,9 @@ services:
         HOST_UID: ${HOST_UID:-}
         HOST_GID: ${HOST_GID:-}
     container_name: spacevim
-    entrypoint: nvim
     labels: [ 'devenv.type=spacevim' ]
     volumes:
-      - ${HOME}/.SpaceVim.d:/root/.SpaceVim.d
+      - ${HOME}/.SpaceVim.d:/home/linuxbrew/.SpaceVim.d
     <<: *common-options
 
 # vim: tabstop=2 shiftwidth=2 expandtab foldmethod=marker

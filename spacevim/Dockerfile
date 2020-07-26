@@ -79,3 +79,5 @@ RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
 #
 # julia-vim
 #   Unknown function: LaTeXtoUnicode#Refresh
+
+ENTRYPOINT ["nvim"]
