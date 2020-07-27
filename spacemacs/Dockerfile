@@ -6,6 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANGUAGE=en_US \
     LANG=en_US.UTF-8
 
+# NOTE: rtags will pull in elpa-rtags package as "Recommends:" dependency,
+#       which conflicts with Spacemacs, thus it needs to be installed w/o
+#       recommends deps
+
 # distro deps
 RUN apt-get update \
     && apt-get -y install \
@@ -32,6 +36,8 @@ RUN apt-get update \
         silversearcher-ag \
         xfonts-utils \
         yarnpkg \
+    && apt-get -y --no-install-recommends install \
+        rtags \
     && apt-get clean all
 
 # python2-pip
