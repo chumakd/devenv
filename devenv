@@ -48,6 +48,8 @@ _help()
     exit 1
 }
 
+# TODO: automatic command and options help framework
+#       use `fmt` for auto width formatting
 usage()
 {
     cat <<USAGE_END
@@ -153,8 +155,10 @@ cmd_start()
     local container=$1
 
     if [[ -z $container ]] ; then
+        # TODO: get all datadirs and use `realpath --canonicalize-existing` to normalize the current dir and then compare
         local available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$OLDPWD") )
 
+        # TODO: if interactive (e.g. TERM != dumb and -t 1) and no env found for cur dir, list all envs and ask
         (( ${#available[@]} > 0 )) ||
             die "No environment yet exists for current project '$OLDPWD'." \
                 "You need to create one first. Please, see \`$PROG_NAME --help\`."
@@ -257,18 +261,27 @@ case $cmd in
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
 
             case ${image:=$1} in
-               spacevim) docker_opts="--volume $HOME/.SpaceVim.d/:/home/linuxbrew/.SpaceVim.d" ;& # fall through
-               clang*)   image=local/$image
-                         HOST_UID=$(id -u) HOST_GID=$(id -g) \
-                             docker-compose build $1
-                         ;&
+               clang*|spacevim*|spacemacs*|doom-emacs*)
+                        image=local/$image
+                        HOST_UID=$(id -u) HOST_GID=$(id -g) \
+                            docker-compose build $1
+                        ;&
 
                bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*) ;&
                julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
 
+                   case $1 in
+                       doom-emacs*) docker_opts="--volume $HOME/.doom.d/:/home/linuxbrew/.doom.d" ;;
+                       spacemacs*)  docker_opts="--volume $HOME/.spacemacs.d/:/home/linuxbrew/.spacemacs.d" ;;
+                       spacevim*)   docker_opts="--volume $HOME/.SpaceVim.d/:/home/linuxbrew/.SpaceVim.d" ;;
+                   esac
+
                    container=${2:-$1-${OLDPWD##*/}}
-                   docker create --name "${container// /-}" --tty \
-                                 --interactive --volume $OLDPWD:/data \
+                   docker create --name "${container// /-}" \
+                                 --tty \
+                                 --interactive \
+                                 --env TERM=${TERM:-xterm-256color} \
+                                 --volume $OLDPWD:/data \
                                  --workdir /data \
                                  --label="devenv.type=$1" \
                                  --label="devenv.datadir=$OLDPWD" \
