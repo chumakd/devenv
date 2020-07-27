@@ -9,7 +9,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # distro deps
 RUN apt-get update \
     && apt-get -y install \
+        ack-grep \
         build-essential \
+        cargo \
         clang \
         clangd \
         cmake \
@@ -23,8 +25,11 @@ RUN apt-get update \
         pkg-config \
         python2 \
         python3-pip \
+        ripgrep \
         ruby \
         ruby-dev \
+        rustc \
+        silversearcher-ag \
         xfonts-utils \
         yarnpkg \
     && apt-get clean all
