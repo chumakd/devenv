@@ -250,6 +250,22 @@ services:
     labels: [ 'devenv.type=rust' ]
     <<: *common-options
 
+  # Doom-Emacs ------------------------- {{{1
+  doom-emacs:
+    image: local/doom-emacs
+    build:
+      context: doom-emacs
+      args:
+        HOST_UID: ${HOST_UID:-}
+        HOST_GID: ${HOST_GID:-}
+    container_name: doom-emacs
+    labels: [ 'devenv.type=doom-emacs' ]
+    environment:
+      TERM: ${TERM:-xterm-256color}
+    volumes:
+      - ${HOME}/.doom.d:/home/linuxbrew/.doom.d
+    <<: *common-options
+
   # Spacemacs -------------------------- {{{1
   spacemacs:
     image: local/spacemacs

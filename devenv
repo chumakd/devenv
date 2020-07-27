@@ -244,7 +244,7 @@ case $cmd in
 
     bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
     julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
-    spacevim|spacemacs)
+    spacevim|spacemacs|doom-emacs)
             container=$cmd
             create "$container"
             cmd_start "$container"
