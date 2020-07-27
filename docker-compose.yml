@@ -260,6 +260,8 @@ services:
         HOST_GID: ${HOST_GID:-}
     container_name: spacemacs
     labels: [ 'devenv.type=spacemacs' ]
+    environment:
+      TERM: ${TERM:-xterm-256color}
     volumes:
       - ${HOME}/.spacemacs.d:/home/linuxbrew/.spacemacs.d
     <<: *common-options
@@ -274,6 +276,8 @@ services:
         HOST_GID: ${HOST_GID:-}
     container_name: spacevim
     labels: [ 'devenv.type=spacevim' ]
+    environment:
+      TERM: ${TERM:-xterm-256color}
     volumes:
       - ${HOME}/.SpaceVim.d:/home/linuxbrew/.SpaceVim.d
     <<: *common-options
