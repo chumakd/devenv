@@ -250,6 +250,20 @@ services:
     labels: [ 'devenv.type=rust' ]
     <<: *common-options
 
+  # Spacemacs -------------------------- {{{1
+  spacemacs:
+    image: local/spacemacs
+    build:
+      context: spacemacs
+      args:
+        HOST_UID: ${HOST_UID:-}
+        HOST_GID: ${HOST_GID:-}
+    container_name: spacemacs
+    labels: [ 'devenv.type=spacemacs' ]
+    volumes:
+      - ${HOME}/.spacemacs.d:/home/linuxbrew/.spacemacs.d
+    <<: *common-options
+
   # Spacevim --------------------------- {{{1
   spacevim:
     image: local/spacevim
