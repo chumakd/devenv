@@ -62,6 +62,8 @@ USER linuxbrew
 #    && brew cleanup -s
 
 # spacemacs
-RUN git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d
+RUN git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d \
+    && echo -e "\n\n\n\n\n" | emacs --batch --load $HOME/.emacs.d/init.el \
+    && rm -f $HOME/.spacemacs
 
 ENTRYPOINT ["emacs"]
