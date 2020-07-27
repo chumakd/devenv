@@ -26,6 +26,15 @@ services:
     labels: [ 'devenv.type=bash-repl' ]
     <<: *common-options
 
+  # Clang ------------------------------ {{{1
+  clang:
+    image: local/clang
+    build:
+      context: clang
+    container_name: clang
+    labels: [ 'devenv.type=clang' ]
+    <<: *common-options
+
   # Clojure ---------------------------- {{{1
   clojure:
     image: clojure
@@ -74,15 +83,6 @@ services:
     container_name: gcc
     command: bash
     labels: [ 'devenv.type=gcc' ]
-    <<: *common-options
-
-  # Clang ------------------------------ {{{1
-  clang:
-    image: local/clang
-    build:
-      context: clang
-    container_name: clang
-    labels: [ 'devenv.type=clang' ]
     <<: *common-options
 
   # Golang ----------------------------- {{{1
