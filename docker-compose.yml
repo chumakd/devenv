@@ -266,6 +266,25 @@ services:
       - ${HOME}/.doom.d:/home/linuxbrew/.doom.d
     <<: *common-options
 
+  doom-emacs-x11:
+    image: local/doom-emacs
+    build:
+      context: doom-emacs
+      args:
+        HOST_UID: ${HOST_UID:-}
+        HOST_GID: ${HOST_GID:-}
+    container_name: doom-emacs-x11
+    labels: [ 'devenv.type=doom-emacs' ]
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      TERM: ${TERM:-xterm-256color}
+    volumes:
+      - ${HOME}/.doom.d:/home/linuxbrew/.doom.d
+      - ${HOME}/.local/share/fonts:/usr/local/share/fonts
+      - /etc/localtime:/etc/localtime:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    <<: *common-options
+
   # Spacemacs -------------------------- {{{1
   spacemacs:
     image: local/spacemacs
@@ -282,9 +301,24 @@ services:
       - ${HOME}/.spacemacs.d:/home/linuxbrew/.spacemacs.d
     <<: *common-options
 
-  #spacemacs-x:
-  #spacemacs-x11:
-  #spacemacs-xorg:
+  spacemacs-x11:
+    image: local/spacemacs
+    build:
+      context: spacemacs
+      args:
+        HOST_UID: ${HOST_UID:-}
+        HOST_GID: ${HOST_GID:-}
+    container_name: spacemacs-x11
+    labels: [ 'devenv.type=spacemacs' ]
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      TERM: ${TERM:-xterm-256color}
+    volumes:
+      - ${HOME}/.spacemacs.d:/home/linuxbrew/.spacemacs.d
+      - ${HOME}/.local/share/fonts:/usr/local/share/fonts
+      - /etc/localtime:/etc/localtime:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    <<: *common-options
 
   # Spacevim --------------------------- {{{1
   spacevim:

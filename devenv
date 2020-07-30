@@ -187,8 +187,13 @@ cmd_start()
         fi
     fi
 
-    echo Starting $(basename $(docker inspect --format '{{.Name}}' $container))
-    docker start --attach --interactive $container
+    local container_name=$(basename $(docker inspect --format '{{.Name}}' $container))
+
+    [[ $container_name =~ -x11(-|$) ]] ||
+        local start_opts='--attach --interactive'
+
+    echo "Starting $container_name"
+    docker start $start_opts $container
 }
 
 # TODO: clean current by default, if not found ask for a name or --all option
@@ -248,7 +253,7 @@ case $cmd in
 
     bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
     julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
-    spacevim|spacemacs|doom-emacs)
+    spacevim|spacemacs*|doom-emacs*)
             container=$cmd
             create "$container"
             cmd_start "$container"
@@ -262,7 +267,7 @@ case $cmd in
 
             case ${image:=$1} in
                clang*|spacevim*|spacemacs*|doom-emacs*)
-                        image=local/$image
+                        image=local/${image%-x11}
                         HOST_UID=$(id -u) HOST_GID=$(id -g) \
                             docker-compose build $1
                         ;&
@@ -274,6 +279,14 @@ case $cmd in
                        doom-emacs*) docker_opts="--volume $HOME/.doom.d/:/home/linuxbrew/.doom.d" ;;
                        spacemacs*)  docker_opts="--volume $HOME/.spacemacs.d/:/home/linuxbrew/.spacemacs.d" ;;
                        spacevim*)   docker_opts="--volume $HOME/.SpaceVim.d/:/home/linuxbrew/.SpaceVim.d" ;;
+                   esac
+
+                   case $1 in
+                       *-x11) docker_opts+=" --volume $HOME/.local/share/fonts:/usr/local/share/fonts"
+                              docker_opts+=" --volume /etc/localtime:/etc/localtime:ro"
+                              docker_opts+=" --volume /tmp/.X11-unix:/tmp/.X11-unix"
+                              docker_opts+=" --env DISPLAY=${DISPLAY:-:0}"
+                              ;;
                    esac
 
                    container=${2:-$1-${OLDPWD##*/}}
