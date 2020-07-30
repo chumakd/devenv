@@ -14,6 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get -y install \
         ack-grep \
+        aspell \
         build-essential \
         cargo \
         clang \
@@ -75,7 +76,7 @@ USER linuxbrew
 #    && brew cleanup -s
 
 # spacemacs
-RUN git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d \
+RUN git clone -b develop https://github.com/syl20bnr/spacemacs $HOME/.emacs.d \
     && echo -e "\n\n\n\n\n" | emacs --batch --load $HOME/.emacs.d/init.el \
     && rm -f $HOME/.spacemacs
 
