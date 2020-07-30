@@ -24,6 +24,8 @@ RUN apt-get update \
         fontconfig \
         global \
         golang \
+        libvterm-bin \
+        libvterm-dev \
         npm \
         openjdk-11-jdk-headless \
         pkg-config \
