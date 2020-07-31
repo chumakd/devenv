@@ -76,7 +76,7 @@ USER linuxbrew
 
 # doom-emacs
 ENV PATH=/home/linuxbrew/.emacs.d/bin:$PATH
-RUN git clone https://github.com/hlissner/doom-emacs $HOME/.emacs.d \
+RUN git clone -b develop https://github.com/hlissner/doom-emacs $HOME/.emacs.d \
     && yes | doom install \
     && echo 'if [ -d "$HOME/.emacs.d/bin" ] ; then PATH="$HOME/.emacs.d/bin:$PATH" ; fi' >> $HOME/.profile
 #COPY doom-entrypoint.sh /usr/local/bin/

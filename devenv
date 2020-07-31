@@ -111,6 +111,7 @@ Usage: $PROG_NAME
 USAGE_END
 }
 
+# TODO: add bye() for normal user interaction and exit
 die()
 {
     local error='[ERROR]'
@@ -168,6 +169,7 @@ cmd_start()
             local i=
             for (( i=0 ; i < ${#available[@]} ; ++i )) ; do
                 options[$i]=$(basename $(docker inspect --format '{{.Name}}' ${available[$i]}))
+                # TODO: remove cmd, display only with -v|--verbose, and only if not empty
                 options[$i]+=$(echo -e '\t')$(docker inspect --format '(cmd: {{join .Config.Cmd " "}}' ${available[$i]})
                 options[$i]+=$(docker inspect --format ' {{join .Args " "}})' ${available[$i]})
             done
