@@ -129,7 +129,7 @@ die()
 # TODO: filter by name e.g. python or --all perl
 cmd_list()
 {
-    local filter='grep -v -'
+    local filter='grep -Eve -(dbg|shell|repl|x11)$'
     [[ $1 == -a || $1 == --all ]] && filter=cat
     docker-compose ps --services | ${filter}
 }

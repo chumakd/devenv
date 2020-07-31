@@ -187,6 +187,7 @@ services:
     <<: *common-options
 
   # TODO: check if there're REPL module in Perl6
+  # TODO: update official name change: perl6 -> raku
   perl6-repl:
     image: rakudo-star
     container_name: perl6-repl
