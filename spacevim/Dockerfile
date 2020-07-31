@@ -6,16 +6,14 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANGUAGE=en_US \
     LANG=en_US.UTF-8
 
-# NOTE: rtags will pull in elpa-rtags package as "Recommends:" dependency,
-#       which conflicts with Spacemacs, thus it needs to be installed w/o
-#       recommends deps
-
 # distro deps
 RUN apt-get update \
     && apt-get -y install \
         ack-grep \
+        aspell \
+        autoconf \
+        automake \
         build-essential \
-        cargo \
         clang \
         clangd \
         cmake \
@@ -24,26 +22,50 @@ RUN apt-get update \
         fontconfig \
         global \
         golang \
+        graphviz \
+        libgnutls28-dev \
+        libjansson-dev \
+        libncurses5-dev \
+        libtool \
         libvterm-bin \
         libvterm-dev \
+        libxml2-dev \
         npm \
         openjdk-11-jdk-headless \
         pkg-config \
+        plantuml \
         python2 \
         python3-pip \
         ripgrep \
         ruby \
         ruby-dev \
-        rustc \
         silversearcher-ag \
+        texinfo \
         xfonts-utils \
         yarnpkg \
-    && apt-get -y --no-install-recommends install \
-        rtags \
     && apt-get clean all
+
 
 # python2-pip
 RUN curl https://bootstrap.pypa.io/get-pip.py | python2
+
+# rust+lsp
+ADD https://sh.rustup.rs /usr/local/bin/rustup
+RUN chmod +x /usr/local/bin/rustup \
+    && RUSTUP_HOME=/usr/local CARGO_HOME=/usr/local \
+       rustup -y --profile complete --default-toolchain stable
+
+# lsp
+RUN npm install --global \
+        bash-language-server \
+        dockerfile-language-server-nodejs \
+        tern \
+        typescript \
+        typescript-language-server \
+        vscode-css-languageserver-bin \
+        vscode-html-languageserver-bin \
+    && pip3 install --system 'python-language-server[all]' \
+    && gem install --no-user-install solargraph
 
 # neovim deps
 RUN pip3 install --system neovim pipenv \
@@ -59,9 +81,15 @@ RUN if [ -n "$HOST_UID" ] ; then usermod --uid $HOST_UID linuxbrew ; fi \
 
 USER linuxbrew
 
+ENV PATH=/home/linuxbrew/.local/bin:/home/linuxbrew/.cargo/bin:/home/linuxbrew/go/bin:/home/linuxbrew/.gems/bin:$PATH
+
 # neovim
 RUN brew install nvim \
     && brew cleanup -s
+
+# lsp
+RUN go get -u golang.org/x/tools/gopls \
+    && solargraph download-core
 
 # spacevim
 RUN git clone https://github.com/SpaceVim/SpaceVim.git $HOME/.SpaceVim \
