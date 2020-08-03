@@ -23,6 +23,7 @@ RUN apt-get update \
         cmake \
         cscope \
         exuberant-ctags \
+        fd-find \
         fontconfig \
         global \
         golang \

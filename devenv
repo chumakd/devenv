@@ -155,6 +155,7 @@ cmd_start()
 {
     local container=$1
 
+    # TODO: search up the dir path if nothin's found for current dir, like git
     if [[ -z $container ]] ; then
         # TODO: get all datadirs and use `realpath --canonicalize-existing` to normalize the current dir and then compare
         local available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$OLDPWD") )
@@ -170,8 +171,9 @@ cmd_start()
             for (( i=0 ; i < ${#available[@]} ; ++i )) ; do
                 options[$i]=$(basename $(docker inspect --format '{{.Name}}' ${available[$i]}))
                 # TODO: remove cmd, display only with -v|--verbose, and only if not empty
-                options[$i]+=$(echo -e '\t')$(docker inspect --format '(cmd: {{join .Config.Cmd " "}}' ${available[$i]})
-                options[$i]+=$(docker inspect --format ' {{join .Args " "}})' ${available[$i]})
+                #options[$i]+=$(echo -e '\t')$(docker inspect --format '(cmd: {{join .Config.Cmd " "}}' ${available[$i]})
+                #options[$i]+=$(docker inspect --format ' {{join .Args " "}})' ${available[$i]})
+                options[$i]+=$(docker inspect --format ' {{join .Args " "}}' ${available[$i]})
             done
 
             local o=
@@ -191,6 +193,7 @@ cmd_start()
 
     local container_name=$(basename $(docker inspect --format '{{.Name}}' $container))
 
+    # FIXME: -x11 only works on Linux, check `uname`
     [[ $container_name =~ -x11(-|$) ]] ||
         local start_opts='--attach --interactive'
 
@@ -283,6 +286,7 @@ case $cmd in
                        spacevim*)   docker_opts="--volume $HOME/.SpaceVim.d/:/home/linuxbrew/.SpaceVim.d" ;;
                    esac
 
+                   # FIXME: -x11 only works on Linux, check `uname`
                    case $1 in
                        *-x11) docker_opts+=" --volume $HOME/.local/share/fonts:/usr/local/share/fonts"
                               docker_opts+=" --volume /etc/localtime:/etc/localtime:ro"
