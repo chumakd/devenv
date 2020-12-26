@@ -256,8 +256,8 @@ case $cmd in
     start)  cmd_start "$1" ;;
     clean)  cmd_clean "$1" ;;
 
-    bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*)  ;& # fall through
-    julia*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
+    bash*|clojure*|elixir*|erlang*|fsharp*|gcc*|golang*|haskell*)  ;& # fall through
+    julia*|mono*|node*|openjdk*|perl*|python*|ruby*|rust*) ;&
     spacevim|spacemacs*|doom-emacs*)
             container=$cmd
             create "$container"
@@ -277,8 +277,8 @@ case $cmd in
                             docker-compose build $1
                         ;&
 
-               bash*|clojure*|elixir*|erlang*|gcc*|golang*|haskell*) ;&
-               julia*|node*|openjdk*|perl*|python*|ruby*|rust*)
+               bash*|clojure*|elixir*|erlang*|fsharp*|gcc*|golang*|haskell*) ;&
+               julia*|mono*|node*|openjdk*|perl*|python*|ruby*|rust*)
 
                    case $1 in
                        doom-emacs*) docker_opts="--volume $HOME/.doom.d/:/home/linuxbrew/.doom.d" ;;

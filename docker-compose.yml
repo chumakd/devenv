@@ -77,6 +77,14 @@ services:
     labels: [ 'devenv.type=erlang-repl' ]
     <<: *common-options
 
+  # FSharp ----------------------------- {{{1
+  fsharp:
+    image: fsharp
+    container_name: fsharp
+    command: bash
+    labels: [ 'devenv.type=fsharp' ]
+    <<: *common-options
+
   # GCC -------------------------------- {{{1
   gcc:
     image: gcc
@@ -119,6 +127,14 @@ services:
     image: julia
     container_name: julia-repl
     labels: [ 'devenv.type=julia-repl' ]
+    <<: *common-options
+
+  # Mono ------------------------------- {{{1
+  mono:
+    image: mono
+    container_name: mono
+    command: bash
+    labels: [ 'devenv.type=mono' ]
     <<: *common-options
 
   # Node ------------------------------- {{{1
