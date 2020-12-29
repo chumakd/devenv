@@ -1,0 +1,6 @@
+# 10
+#deb https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main
+#deb-src https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main
+# 11
+deb https://apt.llvm.org/focal/ llvm-toolchain-focal-11 main
+deb-src https://apt.llvm.org/focal/ llvm-toolchain-focal-11 main

@@ -1,26 +1,26 @@
-FROM ubuntu:20.04 as fetcher
-ARG  CLANG_RELEASE=11.0.0
-
-ADD https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_RELEASE}/clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-20.04.tar.xz.sig .
-ADD https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_RELEASE}/clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-20.04.tar.xz .
-
-ENV DEBIAN_FRONTEND=noninteractive \
-    DEBCONF_NONINTERACTIVE_SEEN=true
-
-RUN apt-get update \
-    && apt-get -y install gpg xz-utils
-RUN gpg --keyserver keyserver.ubuntu.com --recv-keys B6C8F98282B944E3B0D5C2530FC3042E345AD05D \
-    && gpg --verify clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-20.04.tar.xz.sig
-RUN tar -xf clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-
-
 FROM ubuntu:20.04
-ARG  CLANG_RELEASE=11.0.0
-
-COPY --from=fetcher /clang+llvm-${CLANG_RELEASE}-x86_64-linux-gnu-ubuntu-20.04/ /usr/local/
 
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true
 
 RUN apt-get update \
-    && apt-get -y install build-essential cmake
+    && apt-get install -y \
+       apt-transport-https \
+       ca-certificates \
+       gpg
+
+# GPG key for apt.llvm.org repo:
+#   Sylvestre Ledru - Debian LLVM packages <sylvestre@debian.org>
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 15CF4D18AF4F7421
+
+COPY llvm.list /etc/apt/sources.list.d/
+
+RUN apt-get update \
+    && apt-get install -y \
+       build-essential \
+       clang-11 \
+       clangd-11 \
+       cmake \
+    && apt-get clean
+
+RUN ln -s -t /usr/local/bin/ /usr/lib/llvm-11/bin/*
