@@ -8,8 +8,8 @@ x-aliases:
 
 networks:
   default:
-    external:
-      name: bridge
+    name: bridge
+    external: true
 
 services:
 
