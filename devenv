@@ -126,12 +126,15 @@ die()
 
 # commands
 
+# TODO: add attach, exec and shell command (exec -it bash)
+#       with interactive select of a running container or default for cur dir
+
 # TODO: filter by name e.g. python or --all perl
 cmd_list()
 {
     local filter='grep -Eve -(dbg|shell|repl|x11)$'
     [[ $1 == -a || $1 == --all ]] && filter=cat
-    docker-compose ps --services | ${filter}
+    docker compose ps --services | ${filter}
 }
 
 cmd_ps()
@@ -148,7 +151,7 @@ create()
 
     docker inspect --format '{{.Id}}' $container &>/dev/null ||
         HOST_UID=$(id -u) HOST_GID=$(id -g) \
-            docker-compose up --build --no-start $container
+            docker compose up --build --no-start $container
 }
 
 cmd_start()
@@ -219,7 +222,7 @@ cmd_clean()
         local containers=( $(docker ps --quiet --all --filter 'label=devenv.type') )
 
         if (( ${#containers} > 0 )) ; then
-            docker-compose down
+            docker compose down
         fi
 
         for container in "${containers[@]}"; do
@@ -265,16 +268,18 @@ case $cmd in
             ;;
 
             # TODO: enable USER override by the current user IDs
-    run)    docker-compose run --rm --volume $OLDPWD:/data --workdir /data "$@" ;;
+    run)    docker compose run --rm --volume $OLDPWD:/data --workdir /data "$@" ;;
 
     init)   [[ -n $1 ]] ||
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
 
             case ${image:=$1} in
+               perl6*)  image=rakudo-star ;;& # continue matching
+
                clang*|spacevim*|spacemacs*|doom-emacs*)
                         image=local/${image%-x11}
                         HOST_UID=$(id -u) HOST_GID=$(id -g) \
-                            docker-compose build $1
+                            docker compose build $1
                         ;&
 
                bash*|clojure*|elixir*|erlang*|fsharp*|gcc*|golang*|haskell*) ;&
