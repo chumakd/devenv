@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true
@@ -18,9 +18,13 @@ COPY llvm.list /etc/apt/sources.list.d/
 RUN apt-get update \
     && apt-get install -y \
        build-essential \
-       clang-11 \
-       clangd-11 \
+       clang-19 \
+       clangd-19 \
+       llvm-19 \
+       lld-19 \
+       lldb-19 \
        cmake \
+       gdb \
     && apt-get clean
 
-RUN ln -s -t /usr/local/bin/ /usr/lib/llvm-11/bin/*
+RUN ln -s -t /usr/local/bin/ /usr/lib/llvm-19/bin/*
