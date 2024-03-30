@@ -161,7 +161,7 @@ cmd_start()
     # TODO: search up the dir path if nothin's found for current dir, like git
     if [[ -z $container ]] ; then
         # TODO: get all datadirs and use `realpath --canonicalize-existing` to normalize the current dir and then compare
-        local available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$OLDPWD") )
+        local available=( $(docker ps --quiet --all --filter "label=devenv.datadir=$datadir") )
 
         # TODO: if interactive (e.g. TERM != dumb and -t 1) and no env found for cur dir, list all envs and ask
         (( ${#available[@]} > 0 )) ||
@@ -248,6 +248,16 @@ while [[ -n $1 ]] ; do
     shift
 done
 
+case $(uname) in
+    Linux) datadir=$(readlink -f .) ;;
+    Darwin) if type -p greadlink &>/dev/null ; then
+                datadir=$(greadlink -f .)
+            else
+                datadir=$PWD
+            fi ;;
+    *) datadir=$PWD ;;
+esac
+
 cd $BASE_DIR
 
 # process commands
@@ -268,7 +278,7 @@ case $cmd in
             ;;
 
             # TODO: enable USER override by the current user IDs
-    run)    docker compose run --rm --volume $OLDPWD:/data --workdir /data "$@" ;;
+    run)    docker compose run --rm --volume $datadir:/data --workdir /data "$@" ;;
 
     init)   [[ -n $1 ]] ||
                 die "Missing argument for 'init' command, see \`$PROG_NAME --help\`."
@@ -300,15 +310,15 @@ case $cmd in
                               ;;
                    esac
 
-                   container=${2:-$1-${OLDPWD##*/}}
+                   container=${2:-$1-${datadir##*/}}
                    docker create --name "${container// /-}" \
                                  --tty \
                                  --interactive \
                                  --env TERM=${TERM:-xterm-256color} \
-                                 --volume $OLDPWD:/data \
+                                 --volume $datadir:/data \
                                  --workdir /data \
                                  --label="devenv.type=$1" \
-                                 --label="devenv.datadir=$OLDPWD" \
+                                 --label="devenv.datadir=$datadir" \
                                  $docker_opts "${@:3}" $image
                    ;;
 
