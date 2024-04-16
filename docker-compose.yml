@@ -93,6 +93,14 @@ services:
     labels: [ 'devenv.type=gcc' ]
     <<: *common-options
 
+  # Gleam ------------------------------ {{{1
+  gleam:
+    image: ghcr.io/gleam-lang/gleam:v1.0.0-erlang-alpine
+    container_name: gleam
+    command: bash
+    labels: [ 'devenv.type=gleam' ]
+    <<: *common-options
+
   # Golang ----------------------------- {{{1
   golang:
     image: golang
